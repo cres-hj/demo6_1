@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <title>Title</title>
+</head>
+<body>
+<!--
+  에러: 이 밑을 form으로 감쌌더니 onAuthenticationFailure가 2번 실행되는 오류 있었음
+  => form을 없앰 => 성공;;
+     아마 form을 없애거나 button의 type을 submit이 아닌거로 해야해
+     ∵ form안에 있는 button의 기본 type은 submit이라서
+  해설: 버튼 타입이 submit일 때 입력하고 버튼을 누르면
+        - 버튼 눌렀을 때 onclick으로 1번 실행
+        - submit으로 1번 실행
+        => 총 2번 실행됨
+-->
+<form action="/login" method="post">
+  id: <input type="text" id="username" name="username"><br>
+  password: <input type="password" id="password" name="password"><br>
+  <button onclick="login();">로그인</button>
+</form>
+
+<hr>
+<form action="/logout" method="post">
+  <button>로그아웃</button>
+</form>
+
+<script>
+  // function login() {
+  //   const params = new URLSearchParams();
+  //   params.append("username", document.getElementById('username').value);
+  //   params.append("password", document.getElementById('password').value);
+  //   axios.post("/login", params).then(res=>console.log(res)).catch(res=>console.log(res));
+  // }
+</script>
+</body>
+</html>
