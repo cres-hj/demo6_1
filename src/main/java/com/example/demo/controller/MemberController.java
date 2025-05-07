@@ -69,7 +69,8 @@ public class MemberController {
   @PreAuthorize("isAuthenticated()")
   @Operation(summary = "내 정보 보기", description = "내 정보 보기")
   @GetMapping("/api/members/member")
-  public ResponseEntity<MemberDto.Read> read(Principal principal) {
+  public ResponseEntity<MemberDto.Read> read(Principal principal, HttpSession session) {
+    System.out.println("로그인 후 세션: " + session.getId());
     MemberDto.Read dto = service.read(principal.getName());// 로그인이 되어있기때문에 principal은 null이 되지 않아 -> 걍 내보내
     return ResponseEntity.ok(dto);
   }

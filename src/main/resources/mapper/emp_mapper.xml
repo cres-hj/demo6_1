@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.exercise.EmpDao">
+<!-- namespace: 패키지를 포함한 dao이름 -->
+	<select id="findJob2" resultType="string">
+	<!-- returnType은 List에 담기는거 기준으로 적는거야! List적으면 안됨~ -->
+	<!-- + mybatis는 클래스 이름 소문자로 적어서 string으로 적자 -->
+		select distinct job from emp
+	</select>
+
+	<select id="findEmpBySalLessThen2" resultType="map">
+		<![CDATA[
+			select * from emp where sal<=#{sal}
+		]]>
+	</select>
+	<!--
+		Q. select * from emp where sal<=#{sal}로 적으면 에러나 왜?
+		A. 지금 sql을 작성중인 파일은 xml파일이야
+			-> 인텔리가 볼 때 현재 파일에는 당연히 xml이 들어있다고 판단해서 xml 처리기가 처리해(=PCDATA: xml에서 xml인 부분(xml용어))
+			-> 근데 지금 <=에서의 <가 태그입력할때 쓰는 <>의 <와 동일해서 태그로 인식해 = 태그 안닫았다 생각해서 에러
+			-> 근데 실제로는 xml문서에는 sql이 들어있고, 이 sql은 xml 처리기가 처리하면 안됨!
+				= CDATA: xml 문서에서 xml이 아닌부분
+			-> <![CDATA[]]> 적고 저 안쪽의 []안에 sql문 적어
+				* <![CDATA[]]>: 이 안에 들어있는건 CDATA야! xml문서 아님! 알려주는 xml 문법
+
+		* <학생>
+			<이름>홍길동</이름>
+			<나이>20</나이>
+		   </학생>
+			이렇게 있을 때 엄밀히 말하면 저 '홍길동'과 '20'도 CDATA야
+	-->
+	<select id="findEmpByDname" resultType="map">
+		<![CDATA[
+			select e.*
+				from dept d join emp e on d.deptno=e.deptno where d.dname=#{dname}
+		]]>
+	</select>
+
+	<select id="findEmpByEmpno" resultType="map">
+		select * from emp where empno=#{empno}
+	</select>
+
+	<select id="findPositionFromEmp2" resultType="string">
+		select distinct position from emp2 where position is not null
+		<!-- 다른 방법: select distinct nvl(position, '사원') from emp2 -->
+	</select>
+
+	<select id="findEmp2ByEmpType" resultType="map">
+		select * from emp2 where emp_type=#{empType}
+	</select>
+
+	<select id="findEmp2ByEmpno" resultType="map">
+		select * from emp2 where empno=#{empno}
+	</select>
+
+</mapper>
