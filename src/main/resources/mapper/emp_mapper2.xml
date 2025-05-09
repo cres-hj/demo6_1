@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.exercise.EmpDao2">
+	<resultMap id="mapForEmp" type="com.example.demo.exercise.Emp">
+		<id column="empno" property="empno" />
+		<result column="ename" property="ename" />
+		<result column="job" property="job" />
+		<result column="emp_deptno" property="deptno" />
+	</resultMap>
+
+	<resultMap type="com.example.demo.exercise.DeptWithEmp" id="mapForDept">
+		<id property="deptno" column="deptno" />
+		<result column="dname" property="dname" />
+		<result column="loc" property="loc" />
+		<!-- 앞 셋: 컬럼을 그냥 하나씩 넣으면 돼 -->
+		<!-- 뒤 넷: arraylist를 이룰거야. 이걸 알려주는게 collection -->
+		<collection property="emps" ofType="com.example.demo.exercise.Emp" resultMap="mapForEmp" />
+		<!-- 근데 저 넷이 어떻게 쏙쏙 들어가는지 얘는 몰라. 저 네개의 값으로 emp를 만들기 위해 resultmap이 또 와 => 위로올라가 -->
+	</resultMap>
+
+	<select id="findByDeptno" resultMap="mapForDept">
+		select d.deptno, d.dname, d.loc, e.empno, e.job, e.deptno  as emp_deptno
+		from dept d join emp e on d.deptno=e.deptno
+		where d.deptno=#{deptno}
+	</select>
+</mapper>
