@@ -68,4 +68,12 @@ public class PostController {
     service.delete(pno, principal.getName());
     return ResponseEntity.ok("글을 삭제했습니다");
   }
+
+  @Secured("ROLE_USER")
+  @PutMapping("/posts/good")
+  @Operation(summary = "글추천", description = "이미 추천한 글은 재추천 불가")
+  public ResponseEntity<Integer> 추천(@RequestParam @NotNull Integer pno, Principal principal) {
+    int newGoodCnt = service.추천(pno, principal.getName());
+    return ResponseEntity.ok(newGoodCnt);
+  }
 }

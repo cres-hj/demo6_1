@@ -45,9 +45,14 @@ create table comments (
     constraint comments_fk_pno foreign key(pno) references posts(pno)
 );
 
-create table posts_members (
+create table posts_members_good (
 	pno number(6),
 	username varchar2(10 char),
 	constraint posts_member_pk primary key(pno, username)
 );
 
+create table posts_members_bad (
+	pno number(6),
+	username varchar2(10 char),
+	constraint posts_member_bad_pk primary key(pno, username)
+);
