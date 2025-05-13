@@ -100,8 +100,14 @@ public class PostService {
       throw new JobFailException("자신의 글은 비추천할 수 없습니다");
     // 비추천 했는지 유무 확인
     boolean 비추천여부 = postMemberBadDao.existByUsernameAndPno(pno, loginId);
+    boolean 추천여부 = postMemberGoodDao.existByPnoAndUsername(pno, loginId);
     // 추천하지 않았으면 비추테이블 추가 + 비추+1
     if(!비추천여부) {
+      // 만약 추천을 했으면 추천테이블에서 삭제 + 추천-1
+      if(추천여부) {
+        postMemberGoodDao.remove(pno, loginId);
+        postDao.decreaseGoodCnt(pno);
+      }
       postMemberBadDao.save(pno, loginId);
       postDao.increaseBadCnt(pno);
     }

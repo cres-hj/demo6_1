@@ -79,7 +79,7 @@ public class PostController {
 
   @Secured("ROLE_USER")
   @PutMapping("/posts/bad")
-  @Operation(summary = "비추천", description = "이미 비추천했다면 비추천 취소")
+  @Operation(summary = "비추천", description = "이미 비추천했다면 비추천 취소 / 추천한 글을 비추천하면 추천 취소 후 비추천")
   public ResponseEntity<Integer> 비추천(@RequestParam @NotNull Integer pno, Principal principal) {
     int newBadCnt = service.비추천(pno, principal.getName());
     return ResponseEntity.ok(newBadCnt);

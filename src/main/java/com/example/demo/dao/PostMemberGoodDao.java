@@ -20,4 +20,11 @@ public interface PostMemberGoodDao {
   // count(*)로 존재 여부 확인하는구나
   // 0이 아니면 참! 0이면 ㅁ거짓으로 리턴
 
+  // 비추천 관련
+  // 추천테이블에서 삭제
+  @Delete("delete from posts_members_good where pno=#{pno} and username=#{username}")
+  int remove(int pno, String username);
+
+
+
 }

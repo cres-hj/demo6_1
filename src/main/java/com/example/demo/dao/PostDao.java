@@ -31,6 +31,10 @@ public interface PostDao {
   @Update("update posts set good_cnt=good_cnt+1 where pno=#{pno}")
   int increaseGoodCnt(int pno);
 
+  // 추천수 -1
+  @Update("update posts set good_cnt=good_cnt-1 where pno=#{pno}")
+  int decreaseGoodCnt(int pno);
+
   // 추천수 가져와
   @Select("select good_cnt from posts where pno=#{pno}")
   Optional<Integer> findGoodCntByPno(int pno);
