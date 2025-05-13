@@ -18,6 +18,8 @@ public class PostService {
   private CommentDao commentDao;
   @Autowired
   private PostMemberGoodDao postMemberGoodDao;
+  @Autowired
+  private PostMemberBadDao postMemberBadDao;
 
   private static final int BLOCK_SIZE = 5;
 
@@ -88,7 +90,28 @@ public class PostService {
     postMemberGoodDao.save(pno, loginID);  // 추천했으니까 posts_members_good에 추가
     postDao.increaseGoodCnt(pno);
     return postDao.findGoodCntByPno(pno).get();  // findgoodcntbypno가 Optional인데 지금 추천메소드의 리턴타입이 int라 .get()으로 값 꺼내는거야
+  }
 
+  public int 비추천(int pno, String loginId) {
+    // 글 없으면 예외처리
+    Post post = postDao.findByPno(pno).orElseThrow(()->new EntityNotFoundException("글을 찾을 수 없습니다"));
+    // 본인이 작성한 글이면 비추천 불가
+    if(post.getWriter().equals(loginId))
+      throw new JobFailException("자신의 글은 비추천할 수 없습니다");
+    // 비추천 했는지 유무 확인
+    boolean 비추천여부 = postMemberBadDao.existByUsernameAndPno(pno, loginId);
+    // 추천하지 않았으면 비추테이블 추가 + 비추+1
+    if(!비추천여부) {
+      postMemberBadDao.save(pno, loginId);
+      postDao.increaseBadCnt(pno);
+    }
+    else {// 추천했으면 비추테이블 삭제 + 비추-1
+      postMemberBadDao.remove(pno, loginId);
+      postDao.decreaseBadCnt(pno);
+    }
+    // 새로운 비추천 수 리턴
+    return postDao.findBadCntByPno(pno).get();
+    // findbadcntbypno 리턴타입이 optional인데 지금 메소드의 리턴타입은 int니까 get()으로 값 꺼내주기
   }
 }
 

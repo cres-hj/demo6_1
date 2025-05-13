@@ -34,6 +34,16 @@ public interface PostDao {
   // 추천수 가져와
   @Select("select good_cnt from posts where pno=#{pno}")
   Optional<Integer> findGoodCntByPno(int pno);
+
+  // 비추천 수 가져와
+  @Select("select bad_cnt from posts where pno=#{pno}")
+  Optional<Integer> findBadCntByPno(int pno);
+  // 비추 +1
+  @Update("update posts set bad_cnt = bad_cnt + 1 where pno=#{pno}")
+  int increaseBadCnt(int pno);  // +1 하기 전에 비추천유무 확인하니까 이 때 로그인 거르기 가능(애초에 컨트롤러에 preauthorize 걸면 됨)
+  // 비추 -1
+  @Update("update posts set bad_cnt=bad_cnt-1 where pno=#{pno}")
+  int decreaseBadCnt(int pno);
 }
 
 

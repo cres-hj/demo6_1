@@ -76,4 +76,12 @@ public class PostController {
     int newGoodCnt = service.추천(pno, principal.getName());
     return ResponseEntity.ok(newGoodCnt);
   }
+
+  @Secured("ROLE_USER")
+  @PutMapping("/posts/bad")
+  @Operation(summary = "비추천", description = "이미 비추천했다면 비추천 취소")
+  public ResponseEntity<Integer> 비추천(@RequestParam @NotNull Integer pno, Principal principal) {
+    int newBadCnt = service.비추천(pno, principal.getName());
+    return ResponseEntity.ok(newBadCnt);
+  }
 }
