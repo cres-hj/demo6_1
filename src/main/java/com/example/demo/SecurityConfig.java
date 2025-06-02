@@ -10,6 +10,9 @@ import org.springframework.security.web.*;
 import org.springframework.security.web.access.*;
 import org.springframework.security.web.authentication.*;
 import org.springframework.security.web.authentication.logout.*;
+import org.springframework.web.cors.*;
+
+import java.util.*;
 
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Configuration
@@ -39,6 +42,7 @@ public class SecurityConfig {
     // csrf : MVC 방식에서 타임리프 파일을 위조, 변조하는 것을 막기 위해 사용한다
     //        사용자가 작업한 html파일이 서버가 보내준 파일이 맞는지, 혹시 사용자 html을 조작하지 않았는지 확인하기 위한 랜덤 문자열
     //        화면이 없는 rest에는 의미없는 개념
+    config.cors(cors->cors.configurationSource(corsConfigurationSource()));  // security 설정 추가(0602.mon)
     config.csrf(csrf-> csrf.disable());
     // 화면에 아이디와 비밀번호를 입력해서 로그인하는 formLogin을 활성화
     config.formLogin(form->form.loginPage("/login").loginProcessingUrl("/login")
@@ -47,5 +51,18 @@ public class SecurityConfig {
     config.exceptionHandling(handler->
         handler.accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(authenticationEntryPoint));
     return config.build();
+  }
+
+  @Bean  // security 설정 추가(0602.mon)
+  CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOriginPatterns(Arrays.asList("*"));  // ""에 주소 적는거고 *적는건 모든 주소의 접근 허용
+    config.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE"));
+    config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+    config.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
+    src.registerCorsConfiguration("/**", config);
+    return src;
   }
 }
