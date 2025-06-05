@@ -4,11 +4,15 @@ import com.example.demo.dao.*;
 import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.util.*;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
 import jakarta.validation.*;
 import org.apache.commons.lang3.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.mail.javamail.*;
 import org.springframework.security.crypto.password.*;
 import org.springframework.stereotype.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.*;
 
 import java.io.*;
@@ -20,6 +24,26 @@ public class MemberService {
   private MemberDao memberDao;
   @Autowired
   private PasswordEncoder encoder;
+  @Autowired
+  private JavaMailSender mailSender;  // 메일 보내는거
+
+  // 메일 보내는 코드: 사실상 정해져있어
+  public void sendMail(String 보낸이, String 받는이, String 제목, String 내용) {
+    MimeMessage mimeMessage = mailSender.createMimeMessage();  // mime: 이메일 형식 정도로 생각해
+    try {
+      MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "utf-8");
+      helper.setFrom(보낸이); // 누가보냈니. 그런데 이건 안바뀜 적어둔 메일 주소가 보낸이가 됨
+      helper.setTo(받는이);
+      helper.setSubject(제목);
+      // 두번째 파라미터는 html 활성화 여부 ex)
+      // <a href='aaa'>링크</a> 이렇게 적었을 때 true면 링크로 날아가고 false면 걍 저 글자가 날아가
+      // 우리는 회원가입 링크를 보내야하기 때문에 html 설정 true로 활성화해야해 
+      helper.setText(내용, true);
+    } catch(MessagingException e) {
+      e.printStackTrace();
+    }
+    mailSender.send(mimeMessage);
+  }
 
   public boolean checkUsername(MemberDto.UsernameCheck dto) {
     return !memberDao.existsByUsername(dto.getUsername());
